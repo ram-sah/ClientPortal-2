@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+  users     User[]
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String?
+  companyId    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  company      Company?      @relation(fields: [companyId], references: [id])
+  projectLinks ProjectUser[]
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  companyId   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  company     Company       @relation(fields: [companyId], references: [id])
+  memberLinks ProjectUser[]
+}
+
+model ProjectUser {
+  userId    String
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, projectId])
+  @@map("project_users")
+}
+
+model access_requests {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  requester_email String     @db.VarChar(255)
+  requester_name  String     @db.VarChar(255)
+  company_id      String?    @db.Uuid
+  requested_role  user_role
+  message         String?
+  status          String?    @default("pending") @db.VarChar(20)
+  reviewed_by     String?    @db.Uuid
+  reviewed_at     DateTime?  @db.Timestamp(6)
+  created_at      DateTime?  @default(now()) @db.Timestamp(6)
+  companies       companies? @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           users?     @relation(fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model audit_log {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?   @db.Uuid
+  action        String    @db.VarChar(100)
+  resource_type String?   @db.VarChar(50)
+  resource_id   String?   @db.Uuid
+  details       Json?
+  ip_address    String?   @db.VarChar(45)
+  user_agent    String?
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  users         users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model client_services {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  client_company_id String    @db.Uuid
+  service_id        String    @db.Uuid
+  is_enabled        Boolean?  @default(true)
+  configuration     Json?     @default("{}")
+  enabled_by        String?   @db.Uuid
+  enabled_at        DateTime? @default(now()) @db.Timestamp(6)
+  companies         companies @relation(fields: [client_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users             users?    @relation(fields: [enabled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  services          services  @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model companies {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type            company_type
+  parent_id       String?           @db.Uuid
+  name            String            @db.VarChar(255)
+  domain          String?           @db.VarChar(255)
+  logo_url        String?
+  primary_color   String?           @db.VarChar(7)
+  settings        Json?             @default("{}")
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  access_requests access_requests[]
+  client_services client_services[]
+  companies       companies?        @relation("companiesTocompanies", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_companies companies[]       @relation("companiesTocompanies")
+  consent_log     consent_log[]
+  digital_audits  digital_audits[]
+  project_access  project_access[]
+  projects        projects[]
+  users           users[]
+}
+
+model consent_log {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  company_id   String       @db.Uuid
+  consent_type consent_type
+  status       Boolean
+  granted_by   String?      @db.Uuid
+  ip_address   String?      @db.VarChar(45)
+  details      Json?
+  created_at   DateTime?    @default(now()) @db.Timestamp(6)
+  companies    companies    @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users        users?       @relation(fields: [granted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model digital_audits {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  client_company_id String        @db.Uuid
+  title             String        @db.VarChar(255)
+  html_content      String?
+  status            audit_status? @default(draft)
+  access_type       access_type?  @default(permanent)
+  access_expires_at DateTime?     @db.Timestamp(6)
+  created_by        String?       @db.Uuid
+  published_at      DateTime?     @db.Timestamp(6)
+  created_at        DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?     @default(now()) @db.Timestamp(6)
+  companies         companies     @relation(fields: [client_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users             users?        @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model project_access {
+  id                                     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  project_id                             String       @db.Uuid
+  company_id                             String?      @db.Uuid
+  user_id                                String?      @db.Uuid
+  access_level                           access_level
+  granted_by                             String?      @db.Uuid
+  granted_at                             DateTime?    @default(now()) @db.Timestamp(6)
+  companies                              companies?   @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_project_access_granted_byTousers users?       @relation("project_access_granted_byTousers", fields: [granted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects                               projects     @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_project_access_user_idTousers    users?       @relation("project_access_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model projects {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  client_company_id String           @db.Uuid
+  name              String           @db.VarChar(255)
+  description       String?
+  status            project_status?  @default(active)
+  created_by        String?          @db.Uuid
+  settings          Json?            @default("{}")
+  start_date        DateTime?        @db.Date
+  end_date          DateTime?        @db.Date
+  created_at        DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?        @default(now()) @db.Timestamp(6)
+  project_access    project_access[]
+  companies         companies        @relation(fields: [client_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users             users?           @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model services {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @db.VarChar(255)
+  type            String            @db.VarChar(50)
+  description     String?
+  is_active       Boolean?          @default(true)
+  settings        Json?             @default("{}")
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  client_services client_services[]
+}
+
+model users {
+  id                                              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  company_id                                      String            @db.Uuid
+  email                                           String            @unique @db.VarChar(255)
+  password_hash                                   String?           @db.VarChar(255)
+  first_name                                      String            @db.VarChar(100)
+  last_name                                       String            @db.VarChar(100)
+  role                                            user_role
+  tags                                            String[]
+  google_id                                       String?           @db.VarChar(255)
+  is_active                                       Boolean?          @default(true)
+  last_login                                      DateTime?         @db.Timestamp(6)
+  created_at                                      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at                                      DateTime?         @default(now()) @db.Timestamp(6)
+  access_requests                                 access_requests[]
+  audit_log                                       audit_log[]
+  client_services                                 client_services[]
+  consent_log                                     consent_log[]
+  digital_audits                                  digital_audits[]
+  project_access_project_access_granted_byTousers project_access[]  @relation("project_access_granted_byTousers")
+  project_access_project_access_user_idTousers    project_access[]  @relation("project_access_user_idTousers")
+  projects                                        projects[]
+  companies                                       companies         @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum access_level {
+  edit
+  view
+}
+
+enum access_type {
+  permanent
+  temporary
+}
+
+enum audit_status {
+  draft
+  review
+  published
+  archived
+}
+
+enum company_type {
+  owner
+  partner
+  client
+  sub
+}
+
+enum consent_type {
+  gdpr
+  ai_usage
+  data_sharing
+}
+
+enum project_status {
+  active
+  completed
+  archived
+  draft
+}
+
+enum user_role {
+  owner
+  admin
+  client_services
+  specialty_skills
+  partner_admin
+  partner_contributor
+  partner_viewer
+  client_editor
+  client_viewer
+}

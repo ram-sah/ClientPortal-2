@@ -1,0 +1,116 @@
+🌐 Frontend: Making POST request to /api/auth/login
+index-86h2DuiL.js:48 📤 Frontend: Request data: {email: 'demo@example.com', password: 'admin123'}
+index-86h2DuiL.js:218 
+            
+            
+           POST https://e4ce6b8a-91a7-4973-a250-b767812dbefc.picard.prod.repl.run/api/auth/login 400 (Bad Request)
+window.fetch @ index-86h2DuiL.js:218
+$n @ index-86h2DuiL.js:48
+login @ index-86h2DuiL.js:218
+l @ index-86h2DuiL.js:218
+u @ index-86h2DuiL.js:218
+dS @ index-86h2DuiL.js:37
+hS @ index-86h2DuiL.js:37
+pS @ index-86h2DuiL.js:37
+Tm @ index-86h2DuiL.js:37
+Iy @ index-86h2DuiL.js:37
+(anonymous) @ index-86h2DuiL.js:37
+Kh @ index-86h2DuiL.js:40
+oy @ index-86h2DuiL.js:37
+Ju @ index-86h2DuiL.js:37
+wh @ index-86h2DuiL.js:37
+TS @ index-86h2DuiL.js:37
+index-86h2DuiL.js:48 📥 Frontend: Response status: 400 
+index-86h2DuiL.js:48 API Error: 400 
+overrideMethod @ hook.js:608
+h0 @ index-86h2DuiL.js:48
+await in h0
+$n @ index-86h2DuiL.js:48
+await in $n
+login @ index-86h2DuiL.js:218
+l @ index-86h2DuiL.js:218
+u @ index-86h2DuiL.js:218
+dS @ index-86h2DuiL.js:37
+hS @ index-86h2DuiL.js:37
+pS @ index-86h2DuiL.js:37
+Tm @ index-86h2DuiL.js:37
+Iy @ index-86h2DuiL.js:37
+(anonymous) @ index-86h2DuiL.js:37
+Kh @ index-86h2DuiL.js:40
+oy @ index-86h2DuiL.js:37
+Ju @ index-86h2DuiL.js:37
+wh @ index-86h2DuiL.js:37
+TS @ index-86h2DuiL.js:37
+index-86h2DuiL.js:48 Response: {"error":"getaddrinfo ENOTFOUND helium"}
+overrideMethod @ hook.js:608
+h0 @ index-86h2DuiL.js:48
+await in h0
+$n @ index-86h2DuiL.js:48
+await in $n
+login @ index-86h2DuiL.js:218
+l @ index-86h2DuiL.js:218
+u @ index-86h2DuiL.js:218
+dS @ index-86h2DuiL.js:37
+hS @ index-86h2DuiL.js:37
+pS @ index-86h2DuiL.js:37
+Tm @ index-86h2DuiL.js:37
+Iy @ index-86h2DuiL.js:37
+(anonymous) @ index-86h2DuiL.js:37
+Kh @ index-86h2DuiL.js:40
+oy @ index-86h2DuiL.js:37
+Ju @ index-86h2DuiL.js:37
+wh @ index-86h2DuiL.js:37
+TS @ index-86h2DuiL.js:37
+index-86h2DuiL.js:48 URL: https://e4ce6b8a-91a7-4973-a250-b767812dbefc.picard.prod.repl.run/api/auth/login
+overrideMethod @ hook.js:608
+h0 @ index-86h2DuiL.js:48
+await in h0
+$n @ index-86h2DuiL.js:48
+await in $n
+login @ index-86h2DuiL.js:218
+l @ index-86h2DuiL.js:218
+u @ index-86h2DuiL.js:218
+dS @ index-86h2DuiL.js:37
+hS @ index-86h2DuiL.js:37
+pS @ index-86h2DuiL.js:37
+Tm @ index-86h2DuiL.js:37
+Iy @ index-86h2DuiL.js:37
+(anonymous) @ index-86h2DuiL.js:37
+Kh @ index-86h2DuiL.js:40
+oy @ index-86h2DuiL.js:37
+Ju @ index-86h2DuiL.js:37
+wh @ index-86h2DuiL.js:37
+TS @ index-86h2DuiL.js:37
+background.js:80 Could not get default saving location, resetting location.
+(anonymous) @ background.js:80
+Bg @ background.js:85
+await in Bg
+B6e @ background.js:118
+await in B6e
+(anonymous) @ background.js:118
+(anonymous) @ background.js:82
+background.js:80 The item cache has not been initialized yet.
+(anonymous) @ background.js:80
+loadItemCache @ background.js:118
+hD @ background.js:85
+h6e @ background.js:118
+await in h6e
+B6e @ background.js:118
+await in B6e
+(anonymous) @ background.js:118
+(anonymous) @ background.js:82
+background.js:80 The item cache has not been initialized yet.
+(anonymous) @ background.js:80
+loadItemCache @ background.js:118
+LJj @ background.js:82
+iD @ background.js:82
+B6e @ background.js:118
+await in B6e
+(anonymous) @ background.js:118
+(anonymous) @ background.js:82
+background.js:80 💫 Looking for desktop app com.1password.1password
+background.js:80 📤 Sending <NmRequestAccounts> message to native core <3265900207>
+background.js:80 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:80 💫 Looking for desktop app com.1password.1password7
+background.js:80 📤 Sending <NmRequestAccounts> message to native core <397068653>
+background.js:80 Desktop app port disconnected. Error: Specified native messaging host not found.
